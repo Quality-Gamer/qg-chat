@@ -27,9 +27,9 @@ io.on('connection', async socket => {
 						if(k) {
 							await redis.data.hGetKeyAll(k).then(function(v) {
 								var message = '{'
-							       +'"message" : '+v.message+','
-							       +'"datetime"  : '+v.datetime+','
-							       +'"user_id" : '+v.user_id+''
+							       +'"message" : "'+v.message+'",'
+							       +'"datetime"  : "'+v.datetime+'",'
+							       +'"user_id" : "'+v.user_id+'"'
 							       +'}';
 								   socket.send(message);
 							});
@@ -46,9 +46,9 @@ io.on('connection', async socket => {
 		var chatHash = utils.data.getChatHash(data.user_id_1,data.user_id_2);
 		utils.data.saveChatMessages(data.user_id_1,chatHash,data.message);
 		var message = '{'
-				       +'"message" : '+data.message+','
-				       +'"datetime"  : '+utils.data.getTimestamp()+','
-				       +'"user_id" : '+data.user_id_1+''
+				       +'"message" : "'+data.message+'",'
+				       +'"datetime"  : "'+utils.data.getTimestamp()+'",'
+				       +'"user_id" : "'+data.user_id_1+'"'
 				       +'}';
 		socket.send(message);
 	});
