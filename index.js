@@ -45,6 +45,7 @@ io.on('connection', async socket => {
 		socket.on('sendMessage', data => {
 		// console.log("Sending message ...")
 		var chatHash = utils.data.getChatHash(data.user_id_1,data.user_id_2);
+		console.log(req);
 		utils.data.saveChatMessages(data.user_id_1,chatHash,data.message);
 		var message = '{'
 				       +'"message" : '+data.message+','
