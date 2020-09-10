@@ -6,10 +6,10 @@ var utils = require("./methods.js");
 const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
-
+var porta = process.env.PORT || 8080;
 
 app.use('/', (req,res) => {
-	console.log("Concetado na porta 3000");
+	console.log("Concetado na porta " + porta);
 });
 
 io.on('connection', async socket => {
@@ -47,13 +47,13 @@ io.on('connection', async socket => {
 		utils.data.saveChatMessages(data.user_id_1,chatHash,data.message);
 		var message = '{'
 				       +'"message" : '+data.message+','
-				       +'"datetime"  : '+v.datetime+','
+				       +'"datetime"  : '+new Date().datetime()+','
 				       +'"user_id" : '+data.user_id_1+''
 				       +'}';
 		socket.send(data.message);
 	});
 });
 
-server.listen(3000);
+server.listen(porta);
 
 
