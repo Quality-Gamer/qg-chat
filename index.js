@@ -47,7 +47,7 @@ io.on('connection', async socket => {
 		utils.data.saveChatMessages(data.user_id_1,chatHash,data.message);
 		var message = '{'
 				       +'"message" : '+data.message+','
-				       +'"datetime"  : '+new Date().datetime()+','
+				       +'"datetime"  : '+utils.data.getTimestamp()+','
 				       +'"user_id" : '+data.user_id_1+''
 				       +'}';
 		socket.send(data.message);
