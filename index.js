@@ -41,21 +41,17 @@ io.on('connection', async socket => {
 		});
 	});
 
-	app.use('/sendMessage', (req,res) => {
-		socket.on('sendMessage', data => {
+	socket.on('sendMessage', data => {
 		// console.log("Sending message ...")
 		var chatHash = utils.data.getChatHash(data.user_id_1,data.user_id_2);
-		console.log(req);
 		utils.data.saveChatMessages(data.user_id_1,chatHash,data.message);
 		var message = '{'
 				       +'"message" : '+data.message+','
 				       +'"datetime"  : '+utils.data.getTimestamp()+','
 				       +'"user_id" : '+data.user_id_1+''
 				       +'}';
-		socket.send(message);
-		});	
+		socket.send(data.message);
 	});
-
 });
 
 server.listen(porta);
