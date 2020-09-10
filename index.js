@@ -9,7 +9,7 @@ const io = require('socket.io')(server);
 var porta = process.env.PORT || 8080;
 
 app.use('/', (req,res) => {
-	console.log("Concetado na porta " + porta);
+	// console.log("Conectado na porta " + porta);
 });
 
 io.on('connection', async socket => {
@@ -17,7 +17,7 @@ io.on('connection', async socket => {
 	socket.on('openChatRoom', async data => {
 		await utils.data.hasChat(data.user_id_1,data.user_id_2).then(async function(value) {
 			if(!value) {
-			console.log("Creating chat room ...")
+			// console.log("Creating chat room ...")
 			utils.data.createChatRoom(data.user_id_1,data.user_id_2);
 			} else {
 				var chatHash = utils.data.getChatHash(data.user_id_1,data.user_id_2);
@@ -36,13 +36,14 @@ io.on('connection', async socket => {
 						}
 					});
 				});
-				console.log("Loading messages ...")
+				// console.log("Loading messages ...")
 			}
 		});
 	});
 
-	socket.on('sendMessage', data => {
-		console.log("Sending message ...")
+	app.use('/sendMessage', (req,res) => {
+		socket.on('sendMessage', data => {
+		// console.log("Sending message ...")
 		var chatHash = utils.data.getChatHash(data.user_id_1,data.user_id_2);
 		utils.data.saveChatMessages(data.user_id_1,chatHash,data.message);
 		var message = '{'
@@ -51,7 +52,9 @@ io.on('connection', async socket => {
 				       +'"user_id" : '+data.user_id_1+''
 				       +'}';
 		socket.send(data.message);
+		});	
 	});
+
 });
 
 server.listen(porta);
