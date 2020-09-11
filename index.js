@@ -20,9 +20,11 @@ io.on('connection', async socket => {
 			// console.log("Creating chat room ...")
 			utils.data.createChatRoom(data.user_id_1,data.user_id_2);
 			} else {
-				var chatHash = utils.data.getChatHash(data.user_id_1,data.user_id_2);
+				var max = Math.max(data.user_id_1,data.user_id_2);
+				var min = Math.min(data.user_id_1,data.user_id_2);
+				var chatHash = utils.data.getChatHash(min,max);
 				await utils.data.loadChatMessages(chatHash).then(function(msg) {
-					console.log(msg)
+					// console.log(msg)
 					msg.forEach(async k => {
 						if(k) {
 							await redis.data.hGetKeyAll(k).then(function(v) {
@@ -43,7 +45,9 @@ io.on('connection', async socket => {
 
 	socket.on('sendMessage', data => {
 		// console.log("Sending message ...")
-		var chatHash = utils.data.getChatHash(data.user_id_1,data.user_id_2);
+		var max = Math.max(data.user_id_1,data.user_id_2);
+		var min = Math.min(data.user_id_1,data.user_id_2);
+		var chatHash = utils.data.getChatHash(min,max);
 		utils.data.saveChatMessages(data.user_id_1,chatHash,data.message);
 		var message = '{'
 				       +'"message" : "'+data.message+'",'
