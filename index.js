@@ -88,6 +88,21 @@ socket.on('news', async data => {
 	});
 });
 
+socket.on('read', async data => {
+	 var max = Math.max(data.user_id_1,data.user_id_2);
+	 var min = Math.min(data.user_id_1,data.user_id_2);
+	 var chatHash = utils.data.getChatHash(min,max);
+	 await utils.data.loadChatMessages(chatHash).then(function(msg) {
+	 	msg.forEach(async k => {
+			if(k) {
+				await redis.data.hGetKeyAll(k).then(function(v) {
+	 				redis.data.hSetKey(k,"read",1);
+				});
+			}
+		});
+	 });
+});
+
 });
 
 server.listen(porta);

@@ -5,6 +5,7 @@ const countKey = preKey + ":qt";
 const userField = "user_id";
 const messageField = "message";
 const dateField = "datetime";
+const readField = "read";
 
 methods = {};
 global.hChat = false;
@@ -43,6 +44,7 @@ methods.saveChatMessages = (user_id,hash,message) => {
 	redis.data.hSetKey(chatKey,userField,user_id);
 	redis.data.hSetKey(chatKey,messageField,message);
 	redis.data.hSetKey(chatKey,dateField,Date.now());
+	redis.data.hSetKey(chatKey,readField,0);
 }
 
 methods.getChatHash = (user_id_1,user_id_2) => {
