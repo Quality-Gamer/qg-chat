@@ -79,7 +79,7 @@ socket.on('news', async data => {
 				 var chatHash = utils.data.getChatHash(min,max);
 				 await utils.data.loadChatMessages(chatHash).then(function(msg) {
 				 	var count = msg.length;
-				 	var ret = {"user_id" : uid2, "count" : count};
+				 	var ret = '{"user_id" : "'+uid2+'",'+'"count" : "'+count+'"}';
 			 	    socket.broadcast.emit('message', ret);
 				 });
    			  }
