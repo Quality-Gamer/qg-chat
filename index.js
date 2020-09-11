@@ -81,6 +81,7 @@ socket.on('news', async data => {
 				 	var count = msg.length;
 				 	var ret = '{"user_id" : "'+uid2+'",'+'"count" : "'+count+'"}';
 			 	    socket.broadcast.emit('message', ret);
+			 	    socket.send(ret);
 				 });
    			  }
 			});
