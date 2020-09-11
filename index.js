@@ -54,7 +54,7 @@ io.on('connection', async socket => {
 				       +'"datetime"  : "'+utils.data.getTimestamp()+'",'
 				       +'"user_id" : "'+data.user_id_1+'"'
 				       +'}';
-		socket.send(message);
+		socket.emit(message);
 	});
 });
 
