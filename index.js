@@ -13,8 +13,16 @@ app.use('/', (req,res) => {
 });
 
 io.on('connection', async socket => {
-	console.log(`Socket conectado: ${socket.id}`);
+	// console.log(io.sockets.adapter.rooms);
+	// console.log(`Socket conectado: ${socket.id}`);
 	socket.on('openChatRoom', async data => {
+		var max = Math.max(data.user_id_1,data.user_id_2);
+		var min = Math.min(data.user_id_1,data.user_id_2);
+		var chatHash = utils.data.getChatHash(min,max);
+		// console.log("user_id -> "+ data.user_id_1 + " chatHash -> "+chatHash);
+		socket.join(chatHash, () => {
+			// console.log("join room");
+		});
 		await utils.data.hasChat(data.user_id_1,data.user_id_2).then(async function(value) {
 			if(!value) {
 			// console.log("Creating chat room ...")
@@ -33,7 +41,7 @@ io.on('connection', async socket => {
 							       +'"datetime"  : "'+v.datetime+'",'
 							       +'"user_id" : "'+v.user_id+'"'
 							       +'}';
-								   socket.send(message);
+								   socket.broadcast.to(chatHash).emit('message', message);
 							});
 						}
 					});
@@ -54,10 +62,10 @@ io.on('connection', async socket => {
 				       +'"datetime"  : "'+utils.data.getTimestamp()+'",'
 				       +'"user_id" : "'+data.user_id_1+'"'
 				       +'}';
-		socket.send(message);
+		socket.broadcast.to(chatHash).emit('message', message);
 	});
 });
 
-server.listen(porta);
+server.listen(3000);
 
 
