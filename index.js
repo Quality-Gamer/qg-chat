@@ -66,6 +66,6 @@ io.on('connection', async socket => {
 	});
 });
 
-server.listen(3000);
+server.listen(porta);
 
 
