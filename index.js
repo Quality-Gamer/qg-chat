@@ -65,8 +65,30 @@ io.on('connection', async socket => {
 	   socket.send(message);
 	   socket.broadcast.to(chatHash).emit('message', message);
 	});
+
+
+socket.on('news', async data => {
+	var key = "ms:ct:lu";
+	await redis.data.hGetKeyAll(key).then(function(v) {
+	       
+	       Object.entries(v).forEach(async ([key, value]) => {
+	       	  var [uid1,uid2] = key.split('/');
+   			  if(uid1 == data.user_id_1) {
+   			  	 var max = Math.max(uid1,uid2);
+				 var min = Math.min(uid1,uid2);
+				 var chatHash = utils.data.getChatHash(min,max);
+				 await utils.data.loadChatMessages(chatHash).then(function(msg) {
+				 	var count = msg.length;
+				 	var ret = {"user_id" : uid2, "count" : count};
+			 	    socket.broadcast.emit('message', ret);
+				 });
+   			  }
+			});
+	});
 });
 
-server.listen(porta);
+});
+
+server.listen(3000);
 
 
