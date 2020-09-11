@@ -41,7 +41,7 @@ io.on('connection', async socket => {
 							       +'"datetime"  : "'+v.datetime+'",'
 							       +'"user_id" : "'+v.user_id+'"'
 							       +'}';
-								   socket.broadcast.to(chatHash).emit('message', message);
+							       socket.send(message);
 							});
 						}
 					});
@@ -62,7 +62,8 @@ io.on('connection', async socket => {
 				       +'"datetime"  : "'+utils.data.getTimestamp()+'",'
 				       +'"user_id" : "'+data.user_id_1+'"'
 				       +'}';
-		socket.broadcast.to(chatHash).emit('message', message);
+	   socket.send(message);
+	   socket.broadcast.to(chatHash).emit('message', message);
 	});
 });
 
