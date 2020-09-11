@@ -89,6 +89,6 @@ socket.on('news', async data => {
 
 });
 
-server.listen(3000);
+server.listen(porta);
 
 
