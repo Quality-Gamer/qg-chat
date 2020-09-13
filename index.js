@@ -101,7 +101,7 @@ socket.on('write', async data => {
 	 var chatHash = utils.data.getChatHash(data.user_id_1,data.user_id_2);
 	 await utils.data.getWrite(chatHash,data.user_id_2).then(function(v) {
 	 	var ret = '{"user_id" : "'+data.user_id_2+'",'+'"writing" : "'+v+'"}';
-	 	socket.send(ret);
+	 	socket.broadcast.to(chatHash).emit('message', ret);
 	 });
 });
 
