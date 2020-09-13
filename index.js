@@ -74,8 +74,8 @@ socket.on('news', async data => {
 				 var chatHash = utils.data.getChatHash(uid1,uid2);
 				 await utils.data.getCountNewMessages(chatHash,uid2).then(function(count) {
 				 	var ret = '{"user_id" : "'+uid2+'",'+'"count" : "'+count+'"}';
-			 	    socket.broadcast.emit('message', ret);
 			 	    socket.send(ret);
+			 	    socket.broadcast.emit('message', ret);
 				 });
    			  }
 			});
