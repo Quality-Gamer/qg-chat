@@ -6,6 +6,8 @@ const userField = "user_id";
 const messageField = "message";
 const dateField = "datetime";
 const readField = "read";
+const newMessages = "nw"; 
+const write = "wr"; 
 
 methods = {};
 global.hChat = false;
@@ -27,7 +29,7 @@ methods.hasChat = async (u1,u2) => {
 }
 
 methods.createChatRoom = (user_id_1,user_id_2) => {
-	var chatHash = md5(user_id_1 + " - " + user_id_2);
+	var chatHash = methods.getChatHash(user_id_1,user_id_2);
 	var key1 = preKey + ":" + user_id_1;
 	var key2 = preKey + ":" + user_id_2;
 	redis.data.hSetKey(key1,user_id_2,chatHash);
@@ -35,8 +37,8 @@ methods.createChatRoom = (user_id_1,user_id_2) => {
 	linkUsers(user_id_1,user_id_2);
 }
 
-methods.saveChatMessages = (user_id,hash,message) => {
-	var key = preKey + ":" + hash;
+methods.saveChatMessages = (user_id,chatHash,message) => {
+	var key = preKey + ":" + chatHash;
 
 	redis.data.incrKey(countKey);
 
@@ -44,11 +46,14 @@ methods.saveChatMessages = (user_id,hash,message) => {
 	redis.data.hSetKey(chatKey,userField,user_id);
 	redis.data.hSetKey(chatKey,messageField,message);
 	redis.data.hSetKey(chatKey,dateField,Date.now());
-	redis.data.hSetKey(chatKey,readField,0);
+	// redis.data.hSetKey(chatKey,readField,0);
+	methods.addCountNewMessages(chatHash,user_id);
 }
 
 methods.getChatHash = (user_id_1,user_id_2) => {
-	return md5(user_id_1 + " - " + user_id_2);
+	var max = Math.max(user_id_1,user_id_2);
+	var min = Math.min(user_id_1,user_id_2);
+	return md5(min + " - " + max);
 }
 
 methods.loadChatMessages = async (hash) => {
@@ -65,8 +70,8 @@ methods.loadChatMessages = async (hash) => {
 
 methods.loadKeys = async (key) => {
 	return await redis.data.keys(key).then(function(val) {
-			return val;
-		});
+		return val;
+	});
 } 
 
 methods.getTimestamp = () => {
@@ -74,13 +79,33 @@ methods.getTimestamp = () => {
 	return d.getTime();
 }
 
-methods.sleep = milliseconds => {
-  const date = Date.now();
-  let currentDate = null;
-  do {
-    currentDate = Date.now();
-  } while (currentDate - date < milliseconds);
+methods.addCountNewMessages = (chatHash,uid) => {
+	var key = preKey + ":" + chatHash + ":" + uid;
+	redis.data.incrKey(key);
 }
 
+methods.clearCountNewMessages = (chatHash,uid) => {
+	var key = preKey + ":" + chatHash + ":" + uid;
+	redis.data.setKey(key,0);
+}
+
+methods.getCountNewMessages = async (chatHash,uid) => { 
+	var key = preKey + ":" + chatHash + ":" + uid;
+	return await redis.data.getKey(key).then(function(val) {
+		return val;
+	});
+}
+
+methods.updateWrite = (chatHash,uid,value) => {
+	var key = preKey + ":" + chatHash + ":" + write + ":" + uid;
+	redis.data.setKey(key,value);
+}
+
+methods.getWrite = async (chatHash,uid) => {
+	var key = preKey + ":" + chatHash + ":" + write + ":" + uid;
+	return await redis.data.getKey(key).then(function(val) {
+		return val;
+	});
+}
 
 exports.data = methods;
