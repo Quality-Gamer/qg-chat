@@ -115,7 +115,7 @@ socket.on('write', async data => {
 
 socket.on('disconnect', () => {
     socket.rooms = {};
-    socket.send({rooms: socket.rooms, disconnect: success});
+    socket.send({rooms: socket.rooms, disconnect: "success"});
 });
 
 });
