@@ -35,10 +35,17 @@ io.on('connection', async socket => {
 					msg.forEach(async k => {
 						if(k) {
 							await redis.data.hGetKeyAll(k).then(function(v) {
+								var user_id_received = data.user_id_1;
+
+								if(v.user_id == user_id_received) {
+									user_id_received = data.user_id_2;
+								}
+
 								var message = '{'
 							       +'"message" : "'+v.message+'",'
 							       +'"datetime"  : "'+v.datetime+'",'
-							       +'"user_id" : "'+v.user_id+'"'
+							       +'"user_id_sent" : "'+v.user_id+'",'
+							       +'"user_id_received" : "'+user_id_received+'"'
 							       +'}';
 							       socket.send(message);
 							});
@@ -57,7 +64,8 @@ io.on('connection', async socket => {
 		var message = '{'
 				       +'"message" : "'+data.message+'",'
 				       +'"datetime"  : "'+utils.data.getTimestamp()+'",'
-				       +'"user_id" : "'+data.user_id_1+'"'
+				       +'"user_id_sent" : "'+data.user_id_1+'",'
+				       +'"user_id_received" : "'+data.user_id_2+'"'
 				       +'}';
 	   socket.send(message);
 	   socket.broadcast.to(chatHash).emit('message', message);
