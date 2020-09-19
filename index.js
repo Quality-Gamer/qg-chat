@@ -105,6 +105,10 @@ socket.on('write', async data => {
 	 });
 });
 
+socket.on('disconnect', () => {
+    // socket.rooms === {}
+});
+
 });
 
 server.listen(porta);
