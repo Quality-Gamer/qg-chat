@@ -106,7 +106,7 @@ socket.on('write', async data => {
 });
 
 socket.on('disconnect', () => {
-    // socket.rooms === {}
+    socket.rooms = {};
 });
 
 });
