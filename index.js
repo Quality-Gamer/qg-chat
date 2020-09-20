@@ -31,8 +31,8 @@ io.on('connection', async socket => {
 			} else {
 				var chatHash = utils.data.getChatHash(data.user_id_1,data.user_id_2);
 				await utils.data.loadChatMessages(chatHash).then(function(msg) {
-					// console.log(msg)
-					msg.forEach(async k => {
+					msgSorted = msg.sort(utils.data.sortMessages);
+					msgSorted.forEach(async k => {
 						if(k) {
 							await redis.data.hGetKeyAll(k).then(function(v) {
 								var user_id_received = data.user_id_1;
