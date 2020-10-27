@@ -9,7 +9,7 @@ const io = require('socket.io')(server);
 const noWrite = 0;
 const yesWrite = 1;
 
-var porta = process.env.PORT || 8080;
+var porta = 3000;
 
 app.use('/', (req,res) => {
 	// console.log("Conectado na porta " + porta);
@@ -31,7 +31,7 @@ io.on('connection', async socket => {
 			} else {
 				var chatHash = utils.data.getChatHash(data.user_id_1,data.user_id_2);
 				await utils.data.loadChatMessages(chatHash).then(function(msg) {
-					msgSorted = msg.sort(utils.data.sortMessages);
+					msgSorted = msg.sort(utils.data.sortMessagesById);
 					msgSorted.forEach(async k => {
 						if(k) {
 							await redis.data.hGetKeyAll(k).then(function(v) {
@@ -40,8 +40,10 @@ io.on('connection', async socket => {
 								if(v.user_id == user_id_received) {
 									user_id_received = data.user_id_2;
 								}
+								var mid = k.split(':');
 
 								var message = '{'
+								   + '"id" : "'+mid.pop()+'",'
 							       +'"message" : "'+v.message+'",'
 							       +'"datetime"  : "'+v.datetime+'",'
 							       +'"user_id_sent" : "'+v.user_id+'",'
@@ -62,6 +64,7 @@ io.on('connection', async socket => {
 		var chatHash = utils.data.getChatHash(data.user_id_1,data.user_id_2);
 		utils.data.saveChatMessages(data.user_id_1,chatHash,data.message);
 		var message = '{'
+						+ '"id" : "'+'??'+'",'
 				       +'"message" : "'+data.message+'",'
 				       +'"datetime"  : "'+utils.data.getTimestamp()+'",'
 				       +'"user_id_sent" : "'+data.user_id_1+'",'

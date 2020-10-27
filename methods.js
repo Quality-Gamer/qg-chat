@@ -37,17 +37,20 @@ methods.createChatRoom = (user_id_1,user_id_2) => {
 	linkUsers(user_id_1,user_id_2);
 }
 
-methods.saveChatMessages = (user_id,chatHash,message) => {
+methods.saveChatMessages = async (user_id,chatHash,message) => {
 	var key = preKey + ":" + chatHash;
 
 	redis.data.incrKey(countKey);
 
-	chatKey = key + ":" + methods.getTimestamp();
-	redis.data.hSetKey(chatKey,userField,user_id);
-	redis.data.hSetKey(chatKey,messageField,message);
-	redis.data.hSetKey(chatKey,dateField,Date.now());
-	// redis.data.hSetKey(chatKey,readField,0);
-	methods.addCountNewMessages(chatHash,user_id);
+	await redis.data.getKey(countKey).then((id) => {
+		chatKey = key + ":" + id;
+		redis.data.hSetKey(chatKey,userField,user_id);
+		redis.data.hSetKey(chatKey,messageField,message);
+		redis.data.hSetKey(chatKey,dateField,Date.now());
+		// redis.data.hSetKey(chatKey,readField,0);
+		methods.addCountNewMessages(chatHash,user_id);
+		return id;
+	});
 }
 
 methods.getChatHash = (user_id_1,user_id_2) => {
@@ -118,6 +121,21 @@ methods.sortMessages = (a,b) => {
   
     // a must be equal to b
     return 0;
+}
+
+methods.sortMessagesById = (a,b) => {
+	a = parseInt(a.split(':').pop())
+	b = parseInt(b.split(':').pop())
+
+	if (parseInt(a) > parseInt(b)) {
+		return 1;
+	}
+
+	if(parseInt(a) < parseInt(b)) {
+		return -1;
+	}
+
+	return 0;
 }
 
 exports.data = methods;
