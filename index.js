@@ -9,7 +9,7 @@ const io = require('socket.io')(server);
 const noWrite = 0;
 const yesWrite = 1;
 
-var porta = 3000;
+var porta = process.env.PORT || 8080;
 
 app.use('/', (req,res) => {
 	// console.log("Conectado na porta " + porta);
